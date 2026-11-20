@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+model Content {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  kind        String
+  title       String   @db.VarChar(200)
+  body        String   @default("")
+  category    String   @default("") @db.VarChar(100)
+  externalUrl String?
+  fiscalYear  Int?
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  authorId    String   @db.VarChar(36)
+  version     Int      @default(1)
+  imageId     String?  @db.VarChar(36)
+  fileId      String?  @db.VarChar(36)
+  image       Media?   @relation("ContentImage",fields:[imageId],references:[id])
+  file        Media?   @relation("ContentFile",fields:[fileId],references:[id])
+  @@index([kind,published,deletedAt,createdAt])
+  @@map("hospital_content")
+}
+model Media {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  kind        String
+  storageKey  String   @unique
+  url         String?
+  name        String
+  size        Int
+  uploadedBy  String   @db.VarChar(36)
+  createdAt   DateTime @default(now())
+  images      Content[] @relation("ContentImage")
+  files       Content[] @relation("ContentFile")
+  @@map("hospital_media")
+}
+model AuditLog {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  contentId   String   @db.VarChar(36)
+  actorId     String   @db.VarChar(36)
+  action      String
+  title       String
+  createdAt   DateTime @default(now())
+  @@index([contentId,createdAt])
+  @@map("hospital_audit_log")
+}
+model User {
+  id           String @id @default(uuid()) @db.VarChar(36)
+  email        String @unique @db.VarChar(191)
+  passwordHash String
+  name         String @db.VarChar(100)
+  role         String @default("editor")
+  active       Boolean @default(true)
+  createdAt    DateTime @default(now())
+  sessions     Session[]
+  @@map("hospital_user")
+}
+model Session {
+  id        String @id @default(uuid()) @db.VarChar(36)
+  userId    String @db.VarChar(36)
+  expiresAt DateTime
+  revokedAt DateTime?
+  user      User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  @@index([expiresAt])
+  @@map("hospital_session")
+}
+model LoginAttempt {
+  id        String @id @db.VarChar(64)
+  attempts  Int @default(1)
+  expiresAt DateTime
+  @@index([expiresAt])
+  @@map("hospital_login_attempt")
+}

@@ -1,5 +1,8 @@
 node_modules/
 .next/
 .env*
-!.env.example
+.env.example
 *.tsbuildinfo
+generated/
+out/
+data/
