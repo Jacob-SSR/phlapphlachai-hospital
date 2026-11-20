@@ -33,6 +33,7 @@ export async function identity(request: Request, optional = false) {
     throw new HttpError(403, "บัญชีนี้ไม่มีสิทธิ์จัดการข้อมูล");
   return {
     id: user.id,
+    username: user.username,
     email: user.email,
     name: user.name,
     role: user.role,

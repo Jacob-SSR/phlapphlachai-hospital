@@ -12,7 +12,7 @@ export default function AuthDialog({
   onSuccess: () => Promise<void>;
 }) {
   const dialog = useRef<HTMLDialogElement>(null),
-    [email, setEmail] = useState(""),
+    [identifier, setIdentifier] = useState(""),
     [password, setPassword] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
@@ -30,7 +30,7 @@ export default function AuthDialog({
     try {
       await apiFetch("/api/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier, password }),
       });
       setPassword("");
       await onSuccess();
@@ -68,12 +68,14 @@ export default function AuthDialog({
       <p className="form-intro">สำหรับเจ้าหน้าที่ที่ได้รับสิทธิ์จัดการข้อมูลโรงพยาบาล</p>
       <form onSubmit={submit} className="staff-form">
         <label>
-          อีเมล
+          ชื่อผู้ใช้หรืออีเมล
           <input
-            type="email"
+            type="text"
+            autoCapitalize="none"
+            spellCheck={false}
             autoComplete="username"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
             maxLength={191}
             disabled={busy}
