@@ -4,7 +4,8 @@ import { apiFetch, ApiError } from "./api";
 import type { Content } from "./content";
 export type StaffUser = {
   id: string;
-  email: string;
+  username: string;
+  email: string | null;
   name: string;
   role: "admin" | "editor";
 };

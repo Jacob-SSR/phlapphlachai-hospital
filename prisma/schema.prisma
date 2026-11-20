@@ -52,7 +52,8 @@ model AuditLog {
 }
 model User {
   id           String @id @default(uuid()) @db.VarChar(36)
-  email        String @unique @db.VarChar(191)
+  username     String @unique @db.VarChar(64)
+  email        String? @unique @db.VarChar(191)
   passwordHash String
   name         String @db.VarChar(100)
   role         String @default("editor")
